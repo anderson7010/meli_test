@@ -1,22 +1,30 @@
+buildscript {
+	ext {
+		springBootVersion = '2.4.2'
+		sonarVersion = '3.0'
+		jacocoVersion = '0.8.5'
+        lombokVersion = '1.18.20'
+	}
+}
+
 plugins {
-	id 'org.springframework.boot' version '2.5.3'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
+	id 'org.springframework.boot' version "${springBootVersion}"
+	id 'org.sonarqube' version "${sonarVersion}"
+	id 'jacoco'
 }
 
-group = 'co.com.meli'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = JavaVersion.VERSION_16
-
-repositories {
-	mavenCentral()
+sonarqube {
+    def modules = subprojects.projectDir.collect { "${it.toString().replace(project.projectDir.toString() + "/", "")}" }
+    properties {
+        property "sonar.sourceEnconding", "UTF-8"
+        property "sonar.modules", "${modules.join(',')}"
+        property "sonar.sources", "src,deployment,settings.gradle,main.gradle,build.gradle,${modules.collect { "${it}/build.gradle" }.join(',')}"
+        property "sonar.test", "src/test"
+        property "sonar.java.binaries", ""
+        property "sonar.junit.reportsPath", ""
+        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+    }
 }
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
-test {
-	useJUnitPlatform()
-}
+apply from: './main.gradle'
