@@ -38,7 +38,6 @@ public class AnalyzeDnaUseCase {
     }
 
     private int countLinearSequences(char[][] matrix) {
-
         int counter = 0;
 
         for (int i = 0; i < matrix.length; i++) {

@@ -3,7 +3,6 @@ package co.com.meli.usecase;
 
 import co.com.meli.model.DnaRecord;
 import co.com.meli.model.gateways.DnaRecordRepository;
-import co.com.meli.usecase.factory.DnaFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,30 +22,47 @@ class AnalyzeDnaUseCaseUnitTest {
 
     private DnaRecord dnaRecord;
 
+    private final String[] verticalValidDna = {"ATGC", "ATGT", "ATAT", "ATAC"};
+    private final String[] horizontalValidDna = {"GGGG", "CCCC", "TTAT", "AGAC"};
+    private final String[] diagonalValidDna = {"ATGG", "CAGT", "TGAT", "GGAA"};
+    private final String[] invalidDna = {"ATGC", "CAGT", "TTAT", "AGAC"};
+
     @BeforeEach
-    void init() {
+    void setup() {
         MockitoAnnotations.openMocks(this);
         Mockito.when(dnaRecordRepository.saveDnaRecord(any())).thenReturn(dnaRecord);
     }
 
     @Test
-    void checkIsMutant() {
-        String[] dna = DnaFactory.generateDna(6, true);
+    void givenVerticalValidDnaWhenCheckIsMutantTest() {
         dnaRecord = DnaRecord.builder()
-                .dna(dna)
+                .dna(verticalValidDna)
                 .build();
-        boolean isMutant = useCase.isMutant(dnaRecord);
-        Assertions.assertTrue(isMutant);
+        Assertions.assertTrue(useCase.isMutant(dnaRecord));
     }
 
     @Test
-    void checkIsNotMutant() {
-        String[] dna = DnaFactory.generateDna(6, false);
+    void givenHorizontalValidDnaWhenCheckIsMutantTest() {
         dnaRecord = DnaRecord.builder()
-                .dna(dna)
+                .dna(horizontalValidDna)
                 .build();
-        boolean isMutant = useCase.isMutant(dnaRecord);
-        Assertions.assertFalse(isMutant);
+        Assertions.assertTrue(useCase.isMutant(dnaRecord));
+    }
+
+    @Test
+    void givenDiagonalValidDnaWhenCheckIsMutantTest() {
+        dnaRecord = DnaRecord.builder()
+                .dna(diagonalValidDna)
+                .build();
+        Assertions.assertTrue(useCase.isMutant(dnaRecord));
+    }
+
+    @Test
+    void givenInvalidDnaCheckIsNotMutantTest() {
+        dnaRecord = DnaRecord.builder()
+                .dna(invalidDna)
+                .build();
+        Assertions.assertFalse(useCase.isMutant(dnaRecord));
     }
 
 }

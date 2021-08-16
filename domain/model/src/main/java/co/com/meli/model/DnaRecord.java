@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder(toBuilder = true)
 public class DnaRecord {
+    private final Long id;
     private final String[] dna;
     private final boolean mutant;
 }

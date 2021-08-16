@@ -1,13 +1,11 @@
 package co.com.meli.api.mutant.request;
 
 import co.com.meli.model.DnaRecord;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.util.Arrays;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class DnaRequest {
     private String[] dna;
 
@@ -15,5 +13,12 @@ public class DnaRequest {
         return DnaRecord.builder()
                 .dna(dna)
                 .build();
+    }
+
+    public void validate() {
+        if (dna == null || dna.length < 4 || Arrays.stream(dna)
+                .anyMatch(str -> str.length() != dna.length)) {
+            throw new IllegalArgumentException("It's necessary a valid DNA sequence.");
+        }
     }
 }
