@@ -1,15 +1,19 @@
 package co.com.meli.api.mutant.request;
 
-public class DnaRequest {
+import co.com.meli.model.DnaRecord;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class DnaRequest {
     private String[] dna;
 
-    public String[] getDna() {
-        return dna;
+    public DnaRecord toModel() {
+        return DnaRecord.builder()
+                .dna(dna)
+                .build();
     }
-
-    public void setDna(String[] dna) {
-        this.dna = dna;
-    }
-
 }

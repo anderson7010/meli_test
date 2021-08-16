@@ -1,0 +1,8 @@
+dependencies {
+    implementation project(':model')
+
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.reactivecommons.utils:object-mapper-api:0.1.0'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
+    testCompile 'org.reactivecommons.utils:object-mapper:0.1.0'
+}

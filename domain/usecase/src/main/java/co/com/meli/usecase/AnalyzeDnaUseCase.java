@@ -1,5 +1,7 @@
 package co.com.meli.usecase;
 
+import co.com.meli.model.DnaRecord;
+import co.com.meli.model.gateways.DnaRecordRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
@@ -7,13 +9,14 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class AnalyzeDnaUseCase {
+    private final DnaRecordRepository dnaRecordRepository;
 
-    private static final List VALID_CHARACTERS = Arrays.asList('G', 'A', 'C', 'T');
-
+    private static final List<Character> VALID_CHARACTERS = Arrays.asList('G', 'A', 'C', 'T');
     private static final int MIN_SEQUENCES = 2;
     private static final int LENGTH_SEQUENCE = 4;
 
-    public boolean isMutant(String[] dna) {
+    public boolean isMutant(DnaRecord dnaRecord) {
+        String[] dna = dnaRecord.getDna();
 
         char[][] matrix = new char[dna.length][dna.length];
 
@@ -23,14 +26,15 @@ public class AnalyzeDnaUseCase {
 
         int count = countLinearSequences(matrix);
         if (count >= MIN_SEQUENCES) {
-            return true;
+            saveDna(dnaRecord, Boolean.TRUE);
+            return Boolean.TRUE;
         }
-
         count += countDiagonalSequences(matrix);
 
-        System.out.println("count = " + count);
+        boolean isMutant = count >= MIN_SEQUENCES;
+        saveDna(dnaRecord, isMutant);
 
-        return count >= MIN_SEQUENCES;
+        return isMutant;
     }
 
     private int countLinearSequences(char[][] matrix) {
@@ -58,16 +62,13 @@ public class AnalyzeDnaUseCase {
                 }
             }
         }
-
         return counter;
     }
 
     private int countDiagonalSequences(char[][] matrix) {
-
         int counter = 0;
 
         for (int i = 0; i < matrix.length / 2; i++) {
-
             SequenceCounterStatus diagonalMajorTopStatus = new SequenceCounterStatus();
             SequenceCounterStatus diagonalMajorBottomStatus = new SequenceCounterStatus();
 
@@ -77,7 +78,6 @@ public class AnalyzeDnaUseCase {
                 if (processCharacter(nextChar, diagonalMajorTopStatus)) {
                     counter++;
                 }
-
                 if (i == 0) {
                     continue;
                 }
@@ -88,11 +88,10 @@ public class AnalyzeDnaUseCase {
                 }
 
             }
-
             SequenceCounterStatus diagonalMinorTopStatus = new SequenceCounterStatus();
             SequenceCounterStatus diagonalMinorBottomStatus = new SequenceCounterStatus();
 
-            // Diagonals from the bottom left to the top right corner direction /////
+            // Diagonals from the bottom left to the top right corner direction ////
             for (int j = 0; j < matrix.length - i; j++) {
 
                 char nextChar = matrix[matrix.length - 1 - (i + j)][j];
@@ -111,7 +110,6 @@ public class AnalyzeDnaUseCase {
 
             }
         }
-
         return counter;
     }
 
@@ -143,5 +141,11 @@ public class AnalyzeDnaUseCase {
     private static class SequenceCounterStatus {
         int count = 0;
         char currentChar = ' ';
+    }
+
+    private DnaRecord saveDna(DnaRecord dnaRecord, boolean isMutant) {
+        return dnaRecordRepository.saveDnaRecord(dnaRecord.toBuilder()
+                .mutant(isMutant)
+                .build());
     }
 }

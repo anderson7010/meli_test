@@ -2,12 +2,11 @@ server:
   port: 8080
 spring:
   application:
-    name: Mutants
-  devtools:
-    add-properties: false
-  h2:
-    console:
-      enabled: true
-      path: /h2
-  profiles:
-    include:
+    name: "Mutants"
+  datasource:
+    url: "jdbc:postgresql://melidbinstance.cst1uxkn3mzy.us-east-2.rds.amazonaws.com:5432/MutansDB"
+    username: "root"
+    password: "password"
+    driverClassName: "org.postgresql.Driver"
+  jpa:
+    databasePlatform: "org.hibernate.dialect.PostgreSQL95Dialect"

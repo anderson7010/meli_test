@@ -1,6 +1,8 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
+	compile 'org.reactivecommons.utils:object-mapper:0.1.0'
+	implementation project(':jpa-repository')
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-undertow', version: '2.4.2'
 	implementation project(':api-rest')
     implementation project(':model')

@@ -1,26 +1,52 @@
 package co.com.meli.usecase;
 
 
+import co.com.meli.model.DnaRecord;
+import co.com.meli.model.gateways.DnaRecordRepository;
 import co.com.meli.usecase.factory.DnaFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
-public class AnalyzeDnaUseCaseUnitTest {
+import static org.mockito.ArgumentMatchers.any;
 
-    private final AnalyzeDnaUseCase useCase = new AnalyzeDnaUseCase();
+class AnalyzeDnaUseCaseUnitTest {
+    @Mock
+    DnaRecordRepository dnaRecordRepository;
 
-    @Test
-    public void checkIsMutant() {
-        String[] dna = DnaFactory.generateDna(6, true);
-        boolean isMutant = useCase.isMutant(dna);
-        Assert.assertTrue(isMutant);
+    @InjectMocks
+    AnalyzeDnaUseCase useCase;
+
+    private DnaRecord dnaRecord;
+
+    @BeforeEach
+    void init() {
+        MockitoAnnotations.openMocks(this);
+        Mockito.when(dnaRecordRepository.saveDnaRecord(any())).thenReturn(dnaRecord);
     }
 
     @Test
-    public void checkIsNotMutant() {
+    void checkIsMutant() {
+        String[] dna = DnaFactory.generateDna(6, true);
+        dnaRecord = DnaRecord.builder()
+                .dna(dna)
+                .build();
+        boolean isMutant = useCase.isMutant(dnaRecord);
+        Assertions.assertTrue(isMutant);
+    }
+
+    @Test
+    void checkIsNotMutant() {
         String[] dna = DnaFactory.generateDna(6, false);
-        boolean isMutant = useCase.isMutant(dna);
-        Assert.assertFalse(isMutant);
+        dnaRecord = DnaRecord.builder()
+                .dna(dna)
+                .build();
+        boolean isMutant = useCase.isMutant(dnaRecord);
+        Assertions.assertFalse(isMutant);
     }
 
 }
